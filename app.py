@@ -22,47 +22,47 @@ logo_base64 = get_image_base64("imagens/logo.png")
 # 3. BARRA LATERAL / SELEÇÃO DE COLUNAS
 st.sidebar.markdown("### ⚙️ Opções de Visualização")
 num_colunas = st.sidebar.radio(
-    "Escolha quantas colunas deseja ver por linha:",
+    "Escolha quantas colunas deseja ver por linha (no PC):",
     options=[1, 2, 3],
-    index=2,  # Padrão: 2 colunas
+    index=2,  # Padrão: 3 colunas
     horizontal=True
 )
 
-# Ajusta a altura da imagem conforme o número de colunas
-altura_imagem_css = 500 if num_colunas == 1 else (420 if num_colunas == 2 else 350)
+# Ajusta a altura da imagem no PC conforme o número de colunas
+altura_imagem_css = 480 if num_colunas == 1 else (380 if num_colunas == 2 else 320)
 
-# 4. CSS Ajustado (Corrigindo a visibilidade da Sidebar)
+# 4. CSS Corrigido para Funcionar o Fundo no CELULAR e PC
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Poppins:wght@400;600&display=swap');
 
-    /* Fundo Creme com a Logo Suave ao Fundo */
+    /* Fundo Creme Base */
     .stApp {{
         background-color: #FAF4EB !important;
-        background-image: url("data:image/png;base64,{logo_base64}");
-        background-repeat: no-repeat;
-        background-position: center 65%;
-        background-attachment: fixed;
-        background-size: 500px auto;
     }}
 
-    /* Camada que suaviza a logo do fundo */
-    .stApp::before {{
+    /* LOGO DE FUNDO RESPONSIVA (Funciona perfeitamente em Celulares e PC) */
+    .stApp::after {{
         content: "";
         position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(250, 244, 235, 0.90);
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background-image: url("data:image/png;base64,{logo_base64}");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 380px auto; /* Tamanho da marca d'água no fundo */
+        opacity: 0.12; /* Transparência suave */
+        pointer-events: none;
         z-index: 0;
     }}
 
-    /* ESTILIZAÇÃO DA SIDEBAR (BARRA LATERAL) - CORREÇÃO DO TEXTO INVISÍVEL */
+    /* ESTILIZAÇÃO DA SIDEBAR (BARRA LATERAL) */
     [data-testid="stSidebar"] {{
-        background-color: #F3E8DC !important; /* Fundo suave levemente diferenciado */
+        background-color: #F3E8DC !important;
         border-right: 2px solid #E5C3B2 !important;
     }}
 
     [data-testid="stSidebar"] * {{
-        color: #3E201B !important; /* Texto castanho escuro visível */
+        color: #3E201B !important;
         font-family: 'Poppins', sans-serif !important;
     }}
 
@@ -95,11 +95,12 @@ st.markdown(f"""
         z-index: 2;
     }}
 
-    /* ALTURA DAS IMAGENS DINÂMICA */
+    /* ALTURA DAS IMAGENS NO COMPUTADOR */
     div[data-testid="stImage"] img {{
         height: {altura_imagem_css}px !important;
         object-fit: cover !important;
         border-radius: 12px !important;
+        width: 100% !important;
     }}
 
     /* Tag do Preço */
@@ -115,7 +116,7 @@ st.markdown(f"""
         margin: 10px 0;
     }}
 
-    /* BOTÃO DE PEDIDO — Fundo Marrom e Texto BRANCO em Destaque */
+    /* BOTÃO DE PEDIDO */
     .stButton > button, 
     div[data-testid="stLinkButton"] > a,
     div[data-testid="stLinkButton"] a,
@@ -154,7 +155,40 @@ st.markdown(f"""
         color: #FFFFFF !important;
     }}
 
-    /* Garante visibilidade da camada */
+    /* =========================================================
+       📱 AJUSTES EXCLUSIVOS PARA TELAS DE CELULAR (MAX-WIDTH: 768px)
+       ========================================================= */
+    @media (max-width: 768px) {{
+        /* Reduz o tamanho da marca d'água no celular */
+        .stApp::after {{
+            background-size: 260px auto !important;
+        }}
+
+        /* Reduz a altura da imagem no celular */
+        div[data-testid="stImage"] img {{
+            height: 240px !important;
+        }}
+
+        /* Reduz margens */
+        .block-container {{
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+            padding-top: 1rem !important;
+        }}
+
+        /* Ajusta tamanho dos títulos */
+        h2 {{
+            font-size: 20px !important;
+        }}
+
+        /* Botão do WhatsApp */
+        div[data-testid="stLinkButton"] > a {{
+            padding: 12px !important;
+            font-size: 13px !important;
+        }}
+    }}
+
+    /* Garante visibilidade do conteúdo acima do fundo */
     .stApp > header, .stApp > div {{
         position: relative;
         z-index: 1;
