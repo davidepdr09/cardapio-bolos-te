@@ -24,34 +24,34 @@ st.sidebar.markdown("### ⚙️ Opções de Visualização")
 num_colunas = st.sidebar.radio(
     "Escolha quantas colunas deseja ver por linha (no PC):",
     options=[1, 2, 3],
-    index=2,  # Padrão: 2 colunas
+    index=2,  # Padrão: 3 colunas
     horizontal=True
 )
 
 # Ajusta a altura da imagem no PC conforme o número de colunas
 altura_imagem_css = 480 if num_colunas == 1 else (380 if num_colunas == 2 else 320)
 
-# 4. CSS Ajustado + REGRAS PARA CELULAR (MEDIA QUERIES)
+# 4. CSS Corrigido para Funcionar o Fundo no CELULAR e PC
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Poppins:wght@400;600&display=swap');
 
-    /* Fundo Creme com a Logo Suave ao Fundo */
+    /* Fundo Creme Base */
     .stApp {{
         background-color: #FAF4EB !important;
-        background-image: url("data:image/png;base64,{logo_base64}");
-        background-repeat: no-repeat;
-        background-position: center 65%;
-        background-attachment: fixed;
-        background-size: 500px auto;
     }}
 
-    /* Camada que suaviza a logo do fundo */
-    .stApp::before {{
+    /* LOGO DE FUNDO RESPONSIVA (Funciona perfeitamente em Celulares e PC) */
+    .stApp::after {{
         content: "";
         position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(250, 244, 235, 0.90);
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background-image: url("data:image/png;base64,{logo_base64}");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 380px auto; /* Tamanho da marca d'água no fundo */
+        opacity: 0.12; /* Transparência suave */
+        pointer-events: none;
         z-index: 0;
     }}
 
@@ -159,31 +159,36 @@ st.markdown(f"""
        📱 AJUSTES EXCLUSIVOS PARA TELAS DE CELULAR (MAX-WIDTH: 768px)
        ========================================================= */
     @media (max-width: 768px) {{
-        /* Reduz a altura da imagem no celular para não cortar */
+        /* Reduz o tamanho da marca d'água no celular */
+        .stApp::after {{
+            background-size: 260px auto !important;
+        }}
+
+        /* Reduz a altura da imagem no celular */
         div[data-testid="stImage"] img {{
             height: 240px !important;
         }}
 
-        /* Reduz margens para aproveitar melhor a tela pequena */
+        /* Reduz margens */
         .block-container {{
             padding-left: 12px !important;
             padding-right: 12px !important;
             padding-top: 1rem !important;
         }}
 
-        /* Ajusta tamanho dos títulos no celular */
+        /* Ajusta tamanho dos títulos */
         h2 {{
             font-size: 20px !important;
         }}
 
-        /* Botão do WhatsApp em destaque no celular */
+        /* Botão do WhatsApp */
         div[data-testid="stLinkButton"] > a {{
             padding: 12px !important;
             font-size: 13px !important;
         }}
     }}
 
-    /* Garante visibilidade da camada */
+    /* Garante visibilidade do conteúdo acima do fundo */
     .stApp > header, .stApp > div {{
         position: relative;
         z-index: 1;
